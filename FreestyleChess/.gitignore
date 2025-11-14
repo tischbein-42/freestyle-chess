@@ -1,0 +1,29 @@
+# Build outputs
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.app
+
+# VS Code settings
+.vscode/
+
+# User-specific file
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+
+# MacOS system files
+.DS_Store
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+packages/
