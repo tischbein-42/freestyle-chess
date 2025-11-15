@@ -1,0 +1,21 @@
+@model FreestyleChess.Models.Board
+
+<h1>Schachbrett</h1>
+
+<div class: "board">
+    @for (int rank = 0; rank < 8; rank++)
+    {
+        <div class="rank">
+            @for (int file = 0; file < 8 ; file++)
+            {
+                var square = Model.Squares[rank, file];
+                var isWhite = (rank + file) % 2 == 0;
+                <div class="square @(isWhite ? "white" : "black")">
+                    @(square.Piece?.Type.ToString() ?? "") <!-- leer, da noch kein Piece -->
+                </div>
+            }
+        </div>
+    }
+</div>
+
+
