@@ -11,11 +11,19 @@
                 var square = Model.Squares[rank, file];
                 var isWhite = (rank + file) % 2 == 0;
                 <div class="square @(isWhite ? "white" : "black")">
-                    @(square.Piece?.Type.ToString() ?? "") <!-- leer, da noch kein Piece -->
-                </div>
+                    @if (square.Piece != null)
+                    {
+                        <img src="~/images/pieces/@(square.Piece.Color.ToString().ToLower())_@(square.Piece.Type.ToString().ToLower()).svg" alt="@square.Piece.Type" />
+                    }
+</div>
             }
         </div>
     }
 </div>
+
+
+<form asp-action="RandomPosition" method="post">
+    <button type="submit">Startposition losen</button>
+</form>
 
 
