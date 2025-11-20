@@ -30,7 +30,7 @@ namespace FreestyleChess.Models
             var rand = new Random();
 
             Piece[] backRank = new Piece[8];
-            var emptySquares = new List<int> {0,1,2,3,4,5,6,7};
+            var emptySquares = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7 };
 
 
             // 1. König und Türme setzen
@@ -102,13 +102,40 @@ namespace FreestyleChess.Models
         {
             Squares[rank, file].Piece = null;
         }
-        
+
         // Method to clear the board
         public void ClearBoard()
         {
             for (int r = 0; r < 8; r++)
                 for (int f = 0; f < 8; f++)
                     Squares[r, f].Piece = null;
+        }
+        
+
+
+        public SerializableBoard ToSerializable()
+        {
+            var serializableBoard = new SerializableBoard();
+
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    var square = Squares[rank, file];
+                    serializableBoard.Squares.Add(new SerializableSquare
+                    {
+                        Rank = rank,
+                        File = file,
+                        Piece = square.Piece == null ? null : new SerializablePiece
+                        {
+                            Type = square.Piece.Type,
+                            Color = square.Piece.Color
+                        }
+                    });
+                }
+            }
+
+            return serializableBoard;
         }
     }
 }
