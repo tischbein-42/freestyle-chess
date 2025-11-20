@@ -103,6 +103,17 @@ namespace FreestyleChess.Models
             Squares[rank, file].Piece = null;
         }
 
+        public bool MovePiece(int fromRank, int fromFile, int toRank, int toFile)
+        {
+            var piece = GetPieceAt(fromRank, fromFile);
+            if (piece == null)
+                return false; // Kein Stück zum Bewegen
+
+            PlacePiece(piece, toRank, toFile);
+            RemovePiece(fromRank, fromFile);
+            return true;
+        }
+
         // Method to clear the board
         public void ClearBoard()
         {
@@ -110,7 +121,7 @@ namespace FreestyleChess.Models
                 for (int f = 0; f < 8; f++)
                     Squares[r, f].Piece = null;
         }
-        
+
 
 
         public SerializableBoard ToSerializable()
@@ -128,14 +139,32 @@ namespace FreestyleChess.Models
                         File = file,
                         Piece = square.Piece == null ? null : new SerializablePiece
                         {
-                            Type = square.Piece.Type,
-                            Color = square.Piece.Color
+                            Type = square.Piece.Type.ToString(),
+                            Color = square.Piece.Color.ToString()
                         }
                     });
                 }
             }
 
             return serializableBoard;
+        }
+
+
+        public static Board FromSerializable(SerializableBoard sBoard)
+        {
+            var board = new Board();
+            foreach (var sq in sBoard.Squares)
+            {
+                if (sq.Piece != null)
+                {
+                    board.Squares[sq.Rank, sq.File].Piece = new Piece(
+                        Enum.Parse<PieceType>(sq.Piece.Type),
+                        Enum.Parse<PieceColor>(sq.Piece.Color)
+                    );
+                }
+            }
+
+            return board;
         }
     }
 }

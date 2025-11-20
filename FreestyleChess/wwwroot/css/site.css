@@ -69,3 +69,8 @@ body {
 .black {
   background-color: #b58863;
 }
+
+
+.square.selected {
+  background-color: rgba(0, 0, 255, 0.2);
+}

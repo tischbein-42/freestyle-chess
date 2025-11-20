@@ -2,7 +2,7 @@
 
 <h1>Schachbrett</h1>
 
-<div class: "board">
+<div class= "board">
     @for (int rank = 0; rank < 8; rank++)
     {
         <div class="rank">
@@ -10,13 +10,19 @@
             {
                 var square = Model.Squares[rank, file];
                 var isWhite = (rank + file) % 2 == 0;
-                <div class="square @(isWhite ? "white" : "black")">
+                <div class="square @(isWhite ? "white" : "black")" data-rank="@rank" data-file="@file">
                     @if (square.Piece != null)
                     {
-                        <img src="~/images/pieces/@(square.Piece.Color.ToString().ToLower())_@(square.Piece.Type.ToString().ToLower()).svg" alt="@square.Piece.Type" />
+                        <img class="piece" 
+                             src="~/images/pieces/@(square.Piece.Color.ToString().ToLower())_@(square.Piece.Type.ToString().ToLower()).svg" 
+                             alt="@square.Piece.Type" />
                     }
-</div>
+                </div>
             }
         </div>
     }
 </div>
+
+@section Scripts {
+    <script src="~/js/board.js"></script>
+}

@@ -14,7 +14,7 @@ namespace FreestyleChess.Models
 
     public class SerializablePiece
     {
-        public PieceType Type { get; set; }
-        public PieceColor Color { get; set; }
+        public required string Type { get; set; }   // Statt Enum
+        public required string Color { get; set; }  // Statt Enum
     }
 }

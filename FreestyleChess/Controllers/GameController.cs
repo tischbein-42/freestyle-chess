@@ -8,10 +8,10 @@ namespace FreestyleChess.Controllers
     {
 
         // GET: /Game/
-        public IActionResult Board()
+        public IActionResult BoardView()
         {
             var board = new Board();
-            return View(board);
+            return View("Board", board);
         }
 
         [HttpPost]
@@ -20,7 +20,7 @@ namespace FreestyleChess.Controllers
             var board = new Board();
             board.SetupChess960();  // Methode, die Chess960 Startposition erzeugt
 
-                // Board in Session speichern
+            // Board in Session speichern
             var serializableBoard = board.ToSerializable();
             string boardJson = JsonSerializer.Serialize(serializableBoard);
             HttpContext.Session.SetString("CurrentPosition", boardJson);
@@ -50,18 +50,40 @@ namespace FreestyleChess.Controllers
             }
 
             // In echtes Board zurückverwandeln
-            var board = new Board();
-            foreach (var sq in serializableBoard.Squares)
-            {
-                if (sq.Piece != null)
-                {
-                    board.Squares[sq.Rank, sq.File].Piece = new Piece(sq.Piece.Type, sq.Piece.Color);
-                }
-            }
+            Board board = Board.FromSerializable(serializableBoard);
 
             // Return or process the board as needed
             return View("Gameplay", board);
         }
+
+
+        [HttpPost]
+        public IActionResult Move([FromBody] MoveRequest request)
+        {
+            string? boardJson = HttpContext.Session.GetString("CurrentPosition");
+            if (string.IsNullOrEmpty(boardJson))
+            {
+                return BadRequest("No board in session.");
+            }
+
+            var serializableBoard = JsonSerializer.Deserialize<SerializableBoard>(boardJson);
+
+            Board board = Board.FromSerializable(serializableBoard!);
+
+            bool moveSucess = board.MovePiece(request.FromRank, request.FromFile, request.ToRank, request.ToFile);
+
+            if (!moveSucess)
+            {
+                return BadRequest("Invalid move.");
+            }
+
+            SerializableBoard updatedBoard = board.ToSerializable();
+            string updatedBoardJson = JsonSerializer.Serialize(updatedBoard);
+            HttpContext.Session.SetString("CurrentPosition", updatedBoardJson);
+
+            return Json(updatedBoard); 
+        }
+
 
     }
 }
