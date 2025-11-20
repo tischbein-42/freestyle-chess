@@ -29,47 +29,60 @@ namespace FreestyleChess.Models
 
             var rand = new Random();
 
-            // 1. Läufer auf unterschiedlichen Farben platzieren
-            int lightSquare = rand.Next(0, 4) * 2; // 0,2,4,6
-            int darkSquare = rand.Next(0, 4) * 2 + 1; // 1,3,5,7
-
             Piece[] backRank = new Piece[8];
-            backRank[lightSquare] = new Piece(PieceType.Bishop, PieceColor.White);
+            var emptySquares = new List<int> {0,1,2,3,4,5,6,7};
+
+
+            // 1. König und Türme setzen
+            int kingSquare = rand.Next(1, 7);
+            int leftRook = rand.Next(0, kingSquare);
+            int rightRook = rand.Next(kingSquare + 1, 8);
+
+            backRank[kingSquare] = new Piece(PieceType.King, PieceColor.White);
+            backRank[leftRook] = new Piece(PieceType.Rook, PieceColor.White);
+            backRank[rightRook] = new Piece(PieceType.Rook, PieceColor.White);
+
+            emptySquares.Remove(kingSquare);
+            emptySquares.Remove(leftRook);
+            emptySquares.Remove(rightRook);
+
+
+            // 2. Läufer auf unterschiedlichen Farben platzieren
+
+            var DarkSquares = emptySquares.Where(x => x % 2 == 0).ToList();
+            var LightSquares = emptySquares.Where(x => x % 2 == 1).ToList();
+
+            int darkSquare = DarkSquares[rand.Next(DarkSquares.Count)];
+            int lightSquare = LightSquares[rand.Next(LightSquares.Count)];
+
             backRank[darkSquare] = new Piece(PieceType.Bishop, PieceColor.White);
+            backRank[lightSquare] = new Piece(PieceType.Bishop, PieceColor.White);
 
-            // 2. König zwischen Türmen platzieren
-            // Erst Plätze für verbleibende Figuren finden
-            List<int> emptySquares = Enumerable.Range(0, 8).Where(i => backRank[i] == null).ToList();
-
-            // Setze Könige und Türme
-            int kingIndex = emptySquares[rand.Next(1, emptySquares.Count - 1)]; // nicht erste oder letzte leer
-            backRank[kingIndex] = new Piece(PieceType.King, PieceColor.White);
-
-            emptySquares = emptySquares.Where(i => i != kingIndex).ToList();
-            backRank[emptySquares[0]] = new Piece(PieceType.Rook, PieceColor.White);
-            backRank[emptySquares[1]] = new Piece(PieceType.Rook, PieceColor.White);
+            emptySquares.Remove(darkSquare);
+            emptySquares.Remove(lightSquare);
 
             // 3. Restliche Figuren (Queen, Knight) zufällig platzieren
-            emptySquares = emptySquares.Where(i => backRank[i] == null).ToList();
+
             List<PieceType> remaining = new List<PieceType> { PieceType.Queen, PieceType.Knight, PieceType.Knight };
             remaining = remaining.OrderBy(x => rand.Next()).ToList();
-
             for (int i = 0; i < remaining.Count; i++)
                 backRank[emptySquares[i]] = new Piece(remaining[i], PieceColor.White);
 
             // 4. Setze erste Reihe (weiß) und achte, dass schwarze Figuren spiegelbildlich sind
             for (int file = 0; file < 8; file++)
             {
-                Squares[0, file].Piece = backRank[file]; // Weiß
-                Squares[7, file].Piece = new Piece(backRank[file].Type, PieceColor.Black); // Schwarz
+                Squares[7, file].Piece = backRank[file]; // Weiß
+                Squares[0, file].Piece = new Piece(backRank[file].Type, PieceColor.Black); // Schwarz
             }
 
             // 5. Fülle zweite und siebte Reihe mit Bauern
             for (int file = 0; file < 8; file++)
             {
-                Squares[1, file].Piece = new Piece(PieceType.Pawn, PieceColor.White);
-                Squares[6, file].Piece = new Piece(PieceType.Pawn, PieceColor.Black);
+                Squares[6, file].Piece = new Piece(PieceType.Pawn, PieceColor.White);
+                Squares[1, file].Piece = new Piece(PieceType.Pawn, PieceColor.Black);
             }
+
+
         }
 
         // Method to get the piece at a specific square
