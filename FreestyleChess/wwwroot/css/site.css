@@ -73,4 +73,16 @@ body {
 
 .square.selected {
   background-color: rgba(0, 0, 255, 0.2);
+  box-shadow: 0 0 8px rgba(0,170,255,0.25) inset;
 }
+
+
+.square.white.marked {
+  background-color: rgba(180, 0, 0, 0.25); /* dunkleres, dezentes Rot */
+}
+
+.square.black.marked {
+  background-color: rgba(180, 100, 100, 0.45); /* helleres Rot */
+}
+
+

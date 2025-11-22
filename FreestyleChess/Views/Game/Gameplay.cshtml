@@ -14,8 +14,9 @@
                     @if (square.Piece != null)
                     {
                         <img class="piece" 
-                             src="~/images/pieces/@(square.Piece.Color.ToString().ToLower())_@(square.Piece.Type.ToString().ToLower()).svg" 
-                             alt="@square.Piece.Type" />
+                            src="~/images/pieces/@(square.Piece.Color.ToString().ToLower())_@(square.Piece.Type.ToString().ToLower()).svg" 
+                            alt="@square.Piece.Type"
+                            data-color="@square.Piece.Color.ToString().ToLower()" />
                     }
                 </div>
             }
