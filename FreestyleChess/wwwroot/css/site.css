@@ -8,6 +8,8 @@ html {
   }
 }
 
+
+
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
@@ -17,9 +19,28 @@ html {
   min-height: 100%;
 }
 
+footer.footer {
+  color: #e0e0e0 !important;      /* helle Schrift */
+  background-color: #1f1f1f;       /* optional: dunkler Footer-Hintergrund */
+}
+
+footer.footer a {
+  color: #0d6efd !important;       /* Links im Footer hell/blau */
+}
+
+footer.footer a:hover {
+  color: #a0c4ff !important;       /* Hoverfarbe optional anpassen */
+}
+
 body {
   margin-bottom: 60px;
+  background-color: #1b1b1b; /* dunkles Grau */
+  color: #e0e0e0;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
 }
+
+
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
@@ -32,14 +53,42 @@ body {
 
 
 
-
-
-
-
-.chessboard {
-  display: inline-block;
-    border: 2px solid black;
+.board-container {
+  display: grid;
+  grid-template-columns: 25px repeat(8, 75px);
+  grid-template-rows: repeat(8, 75px) 25px;
+  gap: 0;
+  position: relative;
 }
+
+/* Zahlen links */
+.rank-labels {
+  grid-column: 1;
+  grid-row: 1 / span 8;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  font-weight: bold;
+  padding-right: 4px;
+  color: #e0e0e0;
+}
+
+/* Buchstaben unten */
+.file-labels {
+  grid-column: 2 / span 8;
+  grid-row: 9;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  color: #e0e0e0;
+}
+
+/* Board selbst */
+.board {
+  grid-column: 2 / span 8;
+  grid-row: 1 / span 8;
+}
+
 
 .rank {
   display: flex;
@@ -47,8 +96,8 @@ body {
 
 
 .square {
-  width: 60px;
-  height: 60px;
+  width: 75px;
+  height: 75px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -86,3 +135,171 @@ body {
 }
 
 
+.square.last-move {
+  background-color: rgba(255, 215, 0, 0.5); /* gold-gelb, halbtransparent */
+}
+
+
+
+
+
+.chess-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 5px 50px 80px 50px;
+  background: #1b1b1b;
+  min-height: 100vh;
+}
+
+/* --- CARD AROUND BOARD --- */
+.chess-card {
+  background: #1d1d1d;
+  padding: 40px 80px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  text-align: center;
+  width: fit-content;
+  display: inline-block;
+}
+
+.chess-card h1 {
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+
+
+.turn-indicator {
+  margin-top: 20px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.turn-indicator.turn-white {
+  background-color: #555; 
+  color: #fff;
+}
+
+.turn-indicator.turn-black {
+  background-color: #333;
+  color: #fff;
+}
+
+/* --- LABELS BESSER POSITIONIEREN --- */
+.file-labels, .rank-labels {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.file-labels .file-label {
+  width: 75px;
+  text-align: center;
+}
+
+.rank-labels .rank-label {
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.navbar {
+  background-color: #1f1f1f !important; /* dunkler Hintergrund */
+}
+
+.navbar .navbar-brand {
+  color: #e0e0e0 !important; /* heller Text für Brand */
+}
+
+.navbar .navbar-brand:hover {
+  color: #0d6efd !important; /* optional: Hover in Blau */
+}
+
+.navbar-nav .nav-link {
+  color: #e0e0e0 !important;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #0d6efd !important;  /* Bootstrap Blau */
+}
+
+.navbar-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #0d6efd;
+  transition: width 0.3s;
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
+}
+
+
+
+
+.position-card {
+  background: #1e1e1e; /* dunkler Card-Hintergrund */
+  padding: 20px 50px 80px 50px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  text-align: center;
+  max-width: 900px;
+  margin: 60px auto; /* zentriert horizontal */
+  margin-top: 30px;
+  color: #f0f0f0; /* helle Schrift */
+}
+
+.position-card h2 {
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.position-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  justify-content: center; /* Card-Inhalt horizontal zentriert */
+  flex-wrap: nowrap; /* für kleinere Bildschirme */
+}
+
+.board-wrapper {
+  flex-shrink: 0;
+}
+
+.position-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  align-self: flex-start;
+}
+
+.position-buttons .btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  width: 200px;
+  background-color: #2a2a2a; /* dezente dunkle Buttons */
+  border: 1px solid #444;
+  color: #f0f0f0;
+}
+
+.position-buttons .btn:hover {
+  background-color: #3a3a3a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+}

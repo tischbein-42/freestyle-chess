@@ -1,34 +1,60 @@
 @model FreestyleChess.Models.Board
 
-<h1>Schachbrett</h1>
-
-<div class= "board">
-    @for (int rank = 0; rank < 8; rank++)
-    {
-        <div class="rank">
-            @for (int file = 0; file < 8 ; file++)
-            {
-                var square = Model.Squares[rank, file];
-                var isWhite = (rank + file) % 2 == 0;
-                <div class="square @(isWhite ? "white" : "black")">
-                    @if (square.Piece != null)
+<div class="position-card">
+    <h2>Position generieren & spielen</h2>
+    <div class="position-container">
+        <!-- Chess Board -->
+        <div class="board-wrapper">
+            <div class="board-container">
+                <!-- Zahlen links -->
+                <div class="rank-labels">
+                    @for (int rank = 8; rank >= 1; rank--)
                     {
-                        <img src="~/images/pieces/@(square.Piece.Color.ToString().ToLower())_@(square.Piece.Type.ToString().ToLower()).svg" alt="@square.Piece.Type" />
+                        <div class="rank-label">@rank</div>
                     }
                 </div>
-            }
+
+                <div class="board">
+                    @for (int rank = 0; rank < 8; rank++)
+                    {
+                        <div class="rank">
+                            @for (int file = 0; file < 8 ; file++)
+                            {
+                                var square = Model.Squares[rank, file];
+                                var isWhite = (rank + file) % 2 == 0;
+                                <div class="square @(isWhite ? "white" : "black")" data-rank="@rank" data-file="@file">
+                                    @if (square.Piece != null)
+                                    {
+                                        <img class="piece" 
+                                             src="~/images/pieces/@(square.Piece.Color.ToString().ToLower())_@(square.Piece.Type.ToString().ToLower()).svg" 
+                                             alt="@square.Piece.Type"
+                                             data-color="@square.Piece.Color.ToString().ToLower()" />
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Buchstaben unten -->
+                <div class="file-labels">
+                    @for (char file = 'a'; file <= 'h'; file++)
+                    {
+                        <div class="file-label">@file</div>
+                    }
+                </div>
+            </div>
         </div>
-    }
+
+        <!-- Buttons rechts -->
+        <div class="position-buttons">
+            <form asp-action="RandomPosition" method="post">
+                <button type="submit" class="btn btn-primary">Startposition losen</button>
+            </form>
+
+            <form asp-action="PlayPosition" method="post">
+                <button type="submit" class="btn btn-success">Diese Position spielen</button>
+            </form>
+        </div>
+    </div>
 </div>
-
-
-<form asp-action="RandomPosition" method="post">
-    <button type="submit">Startposition losen</button>
-</form>
-
-
-<form asp-action="PlayPosition" method="post">
-    <button type="submit">Diese Position spielen</button>
-</form>
-
-

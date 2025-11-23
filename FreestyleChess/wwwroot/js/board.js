@@ -1,5 +1,6 @@
 // Aktuell ausgewähltes Piece merken
 let selectedPiece = null;
+let currentTurn = "white";
 
 function clearSelection() {
     document.querySelectorAll('.square.selected')
@@ -8,6 +9,27 @@ function clearSelection() {
 
 function clearMarkedSquares() {
     document.querySelectorAll('.square.marked').forEach(sq => sq.classList.remove('marked'));
+}
+
+function highlightLastMove(fromRank, fromFile, toRank, toFile)
+{
+    document.querySelectorAll('.square.last-move')
+        .forEach(sq => sq.classList.remove('last-move'));
+
+    const fromSquare = document.querySelector(`.square[data-rank='${fromRank}'][data-file='${fromFile}']`);
+    const toSquare = document.querySelector(`.square[data-rank='${toRank}'][data-file='${toFile}']`);
+
+    if (fromSquare) fromSquare.classList.add('last-move');
+    if (toSquare) toSquare.classList.add('last-move');
+}
+
+
+function updateTurnIndicator() {
+    const el = document.getElementById("turn-indicator");
+    el.textContent = currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1) + " to move!";
+    
+    el.classList.remove("turn-white", "turn-black");
+    el.classList.add(currentTurn === "white" ? "turn-white" : "turn-black");
 }
 
 
@@ -26,12 +48,25 @@ function attachSquareListeners() {
             const file = parseInt(square.dataset.file);
 
             const clickedPieceEl = square.querySelector('.piece');
+            const clickedPieceColor = clickedPieceEl?.dataset.color;
 
-            if(selectedPiece) {
+
+
+             // Wenn wir ein Piece anklicken, prüfen, ob es unsere Farbe ist
+            if (!selectedPiece && clickedPieceEl) {
+                if (clickedPieceColor !== currentTurn) return; // falsche Farbe, nichts tun
+                clearSelection();
+                selectedPiece = { rank, file };
+                square.classList.add("selected");
+                return;
+            }
+
+            else if(selectedPiece ) {
                 if (selectedPiece.rank === rank && selectedPiece.file === file) {
                     // Gleiche Square angeklickt, Auswahl aufheben
                     clearSelection();
                     selectedPiece = null;
+                    return;
                 }
                 else if(clickedPieceEl)
                 {
@@ -45,26 +80,20 @@ function attachSquareListeners() {
                         square.classList.add("selected");
                         return;
                     }
-                    else
-                    {
-                        clearSelection();
-                        movePiece(selectedPiece.rank, selectedPiece.file, rank, file);
-                        selectedPiece = null;
-                    }
+                    
                 }
-                else
-                {
-                    clearSelection();
-                    movePiece(selectedPiece.rank, selectedPiece.file, rank, file);
-                    selectedPiece = null;
-                }
+                movePiece(selectedPiece.rank, selectedPiece.file, rank, file)
+                    .then(() => {
+                        currentTurn = currentTurn === "white" ? "black" : "white";
+                        updateTurnIndicator();
+                    });
+
+                clearSelection();
+                selectedPiece = null;
+                
                
             } 
-            else if(square.querySelector('.piece')) {
-                clearSelection();
-                selectedPiece = { rank, file };
-                square.classList.add("selected");
-            }
+            
         });
 
         square.addEventListener("contextmenu", (e) => {
@@ -91,7 +120,7 @@ function attachSquareListeners() {
 // Funktion zum Bewegen eines Pieces
 function movePiece(fromRank, fromFile, toRank, toFile)
 {
-    fetch('/Game/Move',
+    return fetch('/Game/Move',
         {
             method: 'POST', // POST, weil wir Daten senden
             headers: { 'Content-Type': 'application/json' }, // Wir senden JSON
@@ -107,7 +136,6 @@ function movePiece(fromRank, fromFile, toRank, toFile)
         {
             if (!response.ok) 
             {
-                alert("Move ungültig");
                 throw new Error("Move failed");
             }
             return response.json(); // Antwort vom Server als JSON parsen
@@ -115,6 +143,7 @@ function movePiece(fromRank, fromFile, toRank, toFile)
     .then(boardData => 
         {   
             renderBoard(boardData); // Neues Board darstellen
+            highlightLastMove(fromRank, fromFile, toRank, toFile);
         })
     .catch(error => console.error(error));
 }
@@ -151,6 +180,7 @@ function renderBoard(boardData) {
     });
 
 }
+
 
 
 document.addEventListener('DOMContentLoaded', () => {

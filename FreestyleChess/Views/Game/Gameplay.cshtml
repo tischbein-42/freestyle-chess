@@ -1,28 +1,57 @@
 @model FreestyleChess.Models.Board
 
-<h1>Schachbrett</h1>
 
-<div class= "board">
-    @for (int rank = 0; rank < 8; rank++)
-    {
-        <div class="rank">
-            @for (int file = 0; file < 8 ; file++)
-            {
-                var square = Model.Squares[rank, file];
-                var isWhite = (rank + file) % 2 == 0;
-                <div class="square @(isWhite ? "white" : "black")" data-rank="@rank" data-file="@file">
-                    @if (square.Piece != null)
-                    {
-                        <img class="piece" 
-                            src="~/images/pieces/@(square.Piece.Color.ToString().ToLower())_@(square.Piece.Type.ToString().ToLower()).svg" 
-                            alt="@square.Piece.Type"
-                            data-color="@square.Piece.Color.ToString().ToLower()" />
-                    }
-                </div>
-            }
+
+<div class = "chess-wrapper">
+    <div class = "chess-card">
+        <div class="board-container">
+            <!-- Zahlen links -->
+            <div class="rank-labels">
+                @for (int rank = 1; rank <= 8; rank++)
+                {
+                    <div class="rank-label">@rank</div>
+                }
+            </div>
+
+            <div class= "board">
+                @for (int rank = 0; rank < 8; rank++)
+                {
+                    <div class="rank">
+                        @for (int file = 0; file < 8 ; file++)
+                        {
+                            var square = Model.Squares[rank, file];
+                            var isWhite = (rank + file) % 2 == 0;
+                            <div class="square @(isWhite ? "white" : "black")" data-rank="@rank" data-file="@file">
+                            @if (square.Piece != null)
+                                {
+                                    <img class="piece" 
+                                        src="~/images/pieces/@(square.Piece.Color.ToString().ToLower())_@(square.Piece.Type.ToString().ToLower()).svg" 
+                                        alt="@square.Piece.Type"
+                                        data-color="@square.Piece.Color.ToString().ToLower()" />
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Buchstaben unten -->
+            <div class="file-labels">
+                @for (char file = 'a'; file <= 'h'; file++)
+                {
+                    <div class="file-label">@file</div>
+                }
+            </div>
+
         </div>
-    }
+
+        <div id="turn-indicator" class="turn-indicator">
+            White to move!
+        </div>
+    </div>
 </div>
+
+
 
 @section Scripts {
     <script src="~/js/board.js"></script>
